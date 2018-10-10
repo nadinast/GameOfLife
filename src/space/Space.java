@@ -5,9 +5,13 @@ import cells.Cell;
 import java.util.ArrayList;
 
 public class Space {
-    ArrayList<Cell> cells = new ArrayList<>();
-    ArrayList<Integer> food = new ArrayList<>();
-    
+    private ArrayList<Cell> cells = new ArrayList<>();
+    private ArrayList<Integer> food = new ArrayList<>();
+
+    public boolean checkSpaceForFood() {
+        return true;
+    }
+
     public static void main(String[] args) {
 
     }

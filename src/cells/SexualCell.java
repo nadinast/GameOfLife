@@ -10,4 +10,14 @@ public class SexualCell extends Cell {
     public void eat() {
 
     }
+
+    @Override
+    public boolean canDivide() {
+        return false;
+    }
+
+    @Override
+    public boolean canLive() {
+        return false;
+    }
 }
