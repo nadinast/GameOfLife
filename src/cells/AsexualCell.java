@@ -1,12 +1,17 @@
 package cells;
 
 public class AsexualCell extends Cell {
-    @Override
+	
+    public AsexualCell(int timeUntilHungry, int timeUntilStarve, String name) {
+		super(timeUntilHungry, timeUntilStarve, name);
+	}
+
+	@Override
     public void divide() {
 
     }
 
-    @Override
+    
     public void eat() {
     }
 
