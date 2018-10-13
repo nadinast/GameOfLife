@@ -12,6 +12,7 @@ public class Food {
 	}
 	
 	public int getResourceUnits() throws InterruptedException {
+		//Thread.sleep(new Random().nextInt(1000));
 		return resourceUnits;
 	}
 	
