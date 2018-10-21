@@ -42,7 +42,7 @@ public abstract class Cell implements Runnable {
     }
 	
 	public void eat(Space space) throws InterruptedException {
-		if(space.checkSpaceForFood() == true) {
+		if(space.checkSpaceForFood(cellName)) {
 			System.out.println(" - Cell: " + this.cellName + " ate. ");
 			this.timeUntilHungry = timeHungry;
 			foodUnits ++;
@@ -56,7 +56,7 @@ public abstract class Cell implements Runnable {
 			
 			if(timeUntilHungry < 0) {
 				timeUntilStarve --;
-				System.out.println(this.cellName + " has timeUntilStarve " + timeUntilStarve);
+				//System.out.println(this.cellName + " has timeUntilStarve " + timeUntilStarve);
 				if(timeUntilStarve == 0) {
 					System.out.println("For Cell " + this.cellName + " it's game over!");
 					spaceObj.addFood(new Food(this.timeHungry * 2));
@@ -64,7 +64,7 @@ public abstract class Cell implements Runnable {
 					eat(space);
 				}
 			}else {			
-				System.out.println(this.cellName + " has timeUntilHungry " + timeUntilHungry);
+				//System.out.println(this.cellName + " has timeUntilHungry " + timeUntilHungry);
 				eat(space);
 			}
 		}
