@@ -1,3 +1,20 @@
 notesProj1.txt
-.idea
 GameOfLife.iml
+
+/bin/
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# IntelliJ
+.idea/
+*.iml
+*.iws
+
+# Eclipse
+.project
+.classpath
+.settings/
