@@ -2,21 +2,23 @@ package cells;
 
 import food.Food;
 import space.Space;
+import java.util.concurrent.ThreadLocalRandom;
+
 
 public abstract class Cell implements Runnable {
-
 	public static Space spaceObj;
-	
+
     public abstract void divide();
     public abstract boolean canDivide();
-    public abstract boolean canLive();
+   // public abstract boolean canLive();
 
     protected int foodUnits;
     protected int timeUntilHungry;
     protected int timeUntilStarve;
     
-    private int timeHungry; //
+    private int timeHungry;
     private int timeStarve;
+    protected boolean alive = true;
     
     protected String cellName;
     
@@ -32,43 +34,41 @@ public abstract class Cell implements Runnable {
     	this.timeHungry = this.timeUntilHungry;
     	this.timeStarve = this.timeUntilStarve;
     }
-    
+
+    public void addCellToSpace(Cell c){
+        spaceObj.addCell(c);
+    }
+
 	public void live() throws InterruptedException{
-        //while(canLive()){
+        while(alive){
             eat(spaceObj);
-            //if(canDivide())
-            //divide();
-       // }
+            if(canDivide()) divide();
+       }
     }
 	
 	public void eat(Space space) throws InterruptedException {
-		if(space.checkSpaceForFood(cellName)) {
-			System.out.println(" - Cell: " + this.cellName + " ate. ");
-			this.timeUntilHungry = timeHungry;
-			foodUnits ++;
-			setTime(); //time for hungry&starve are reset
-			Thread.sleep(this.timeHungry * 1000);
+        if (space.checkSpaceForFood(cellName)) {
+            System.out.println(" - Cell: " + this.cellName + " ate. ");
+            this.timeUntilHungry = timeHungry;
+            foodUnits++;
+            setTime(); //time for hungry&starve are reset
+            Thread.sleep(this.timeHungry * 1000); //only for testing!
 
-			live();
-			//wake Food thread up;
-		}else {
-			timeUntilHungry --;
-			
-			if(timeUntilHungry < 0) {
-				timeUntilStarve --;
-				//System.out.println(this.cellName + " has timeUntilStarve " + timeUntilStarve);
-				if(timeUntilStarve == 0) {
-					System.out.println("For Cell " + this.cellName + " it's game over!");
-					spaceObj.addFood(new Food(this.timeHungry * 2));
-				}else if(timeUntilStarve > 0) {
-					eat(space);
-				}
-			}else {			
-				//System.out.println(this.cellName + " has timeUntilHungry " + timeUntilHungry);
-				eat(space);
-			}
-		}
-	}
+        } else {
+            timeUntilHungry--;
+            if (timeUntilHungry < 0) {
+                timeUntilStarve--;
+                if (timeUntilStarve == 0) {
+                    System.out.println("----------For Cell " + this.cellName + " it's game over!----------");
+                    //randomly generated resources after cell death by starvation
+                    int randomResources = ThreadLocalRandom.current().nextInt(1, 5);
+                    spaceObj.addFood(new Food(randomResources, "cellFood"+this.cellName));
+                    System.out.println("----------Cell "+this.cellName+"has generated "+randomResources+" resources!----------");
+                    this.alive = false;
+                }
+            }
+        }
+    }
 	
 	public String toString() {
 		return this.cellName;

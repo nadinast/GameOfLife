@@ -19,9 +19,10 @@ public class SexualCell extends Cell {
     public boolean canDivide() {
         return false;
     }
-
+    /*
     @Override
     public boolean canLive() {
         return false;
     }
+    */
 }

@@ -8,7 +8,18 @@ public class AsexualCell extends Cell {
 
 	@Override
     public void divide() {
-
+        Cell c1 = new AsexualCell(this.timeUntilHungry,this.timeUntilStarve,this.cellName+"-child1");
+        Cell c2 = new AsexualCell(this.timeUntilHungry,this.timeUntilStarve,this.cellName+"-child2");
+        this.alive = false; //this cell that divided is no longer alive
+        System.out.println("~~~~~~~~~~~~CELL "+this.cellName+" HAS DIVIDED!~~~~~~~~~~~");
+        Thread t1 = new Thread(c1);
+        Thread t2 = new Thread(c2);
+        //add the cells to the space
+        addCellToSpace(c1);
+        addCellToSpace(c2);
+        //start two new threads
+        t1.start();
+        t2.start();
     }
 
     
@@ -17,13 +28,15 @@ public class AsexualCell extends Cell {
 
     @Override
     public boolean canDivide() {
+        if(this.foodUnits >= 10){
+            return true;
+        }
         return false;
     }
-
+    /*
     @Override
     public boolean canLive() {
         return false;
-    }
-
+    }*/
 
 }

@@ -79,8 +79,8 @@ public class Space {
     public static void main(String[] args) {
     	Space gameOfLife = new Space();
     	
-    	gameOfLife.addFood(new Food(1));
-    	gameOfLife.addFood(new Food(2));
+    	gameOfLife.addFood(new Food(3, "resourceA"));
+    	gameOfLife.addFood(new Food(10,"resourceB"));
     	//gameOfLife.addFood(new Food(4));
     	//gameOfLife.addFood(new Food(1));
     	
@@ -93,7 +93,7 @@ public class Space {
     	
     	//gameOfLife.addCell(a);
     	gameOfLife.addCell(b); 
-    	gameOfLife.addCell(c);
+    	//gameOfLife.addCell(c);
     	//gameOfLife.addCell(d);
 
 

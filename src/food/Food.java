@@ -9,9 +9,10 @@ public class Food {
 	public String name;
     public final Lock lock = new ReentrantLock();
 	
-	public Food(int resourceUnits) {
+	public Food(int resourceUnits, String name) {
 		this.resourceUnits = resourceUnits;
-		name = String.valueOf(resourceUnits);
+		//name = String.valueOf(resourceUnits);
+		this.name = name;
 	}
 	
 	public int getResourceUnits() throws InterruptedException {
