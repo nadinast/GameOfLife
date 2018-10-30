@@ -1,12 +1,16 @@
 package cells;
 
 public class SexualCell extends Cell {
-    @Override
+	
+    public SexualCell(int timeUntilHungry, int timeUntilStarve, String name) {
+		super(timeUntilHungry, timeUntilStarve, name);
+	}
+    
+	@Override
     public void divide() {
 
     }
-
-    @Override
+    
     public void eat() {
 
     }
@@ -15,9 +19,10 @@ public class SexualCell extends Cell {
     public boolean canDivide() {
         return false;
     }
-
+    /*
     @Override
     public boolean canLive() {
         return false;
     }
+    */
 }
