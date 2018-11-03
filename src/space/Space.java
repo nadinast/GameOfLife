@@ -2,17 +2,21 @@ package space;
 
 import cells.AsexualCell;
 import cells.Cell;
+import cells.SexualCell;
 import food.Food;
 
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Space {
-    private ArrayList<Cell> cells = new ArrayList<>();
-    private CopyOnWriteArrayList<Food> food = new CopyOnWriteArrayList<>();
-    Lock lock = new ReentrantLock();
+    //private ArrayList<Cell> cells = new ArrayList<>();
+    private LinkedBlockingQueue<Cell> cellsQueue = new LinkedBlockingQueue<Cell>();
+    private ArrayList<Food> food = new ArrayList<>();
 
     public boolean checkSpaceForFood(String threadInfo) throws InterruptedException {
     	try {
@@ -36,9 +40,9 @@ public class Space {
                         System.out.println(threadInfo+" unlocked "+resource.name);
                         resource.lock.unlock();
                     }
-				}else {
-                    System.out.println(threadInfo + " tried to lock food "+resource.name);
-                }
+				}//else {
+                    //System.out.println(threadInfo + " tried to lock food "+resource.name);
+                //}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -46,15 +50,28 @@ public class Space {
 		}
         return false;
     }
-    
+
     public void addCell(Cell c) {
-    	cells.add(c);
+        try {
+            cellsQueue.put(c);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
-    
+
     public void addFood(Food f) {
     	food.add(f);
     }
-    
+
+    public LinkedBlockingQueue<Cell> getCellsQueue() {
+        return cellsQueue;
+    }
+
+    public void removeCell(Cell c){
+        cellsQueue.remove(c);
+    }
+
+    /*
     public void printEverything() {
     	for(Cell cell: cells) {
     		System.out.println(cell.toString());
@@ -63,13 +80,15 @@ public class Space {
     		System.out.println(resource.name);
     	}
     }
-    
+    */
+
     public void startGameOfLife() {
-    	for(Cell cell: cells) {
+    	for(Cell cell: cellsQueue) {
     		Thread t = new Thread(cell);
     		t.start();
     	}
     }
+
     
 	public void removeFoodSource(Food foodObj) {
 		//if foodObj.resourceCount === 0 => 
@@ -79,23 +98,32 @@ public class Space {
     public static void main(String[] args) {
     	Space gameOfLife = new Space();
     	
-    	gameOfLife.addFood(new Food(3, "resourceA"));
-    	gameOfLife.addFood(new Food(10,"resourceB"));
-    	//gameOfLife.addFood(new Food(4));
+    	gameOfLife.addFood(new Food(5,"resourceA"));
+    	gameOfLife.addFood(new Food(5,"resourceB"));
+    	gameOfLife.addFood(new Food(5,"resourceC"));
+        gameOfLife.addFood(new Food(5,"resourceD"));
     	//gameOfLife.addFood(new Food(1));
     	
     	Cell a = new AsexualCell(10,5,"A");
-    	Cell b = new AsexualCell(3,1,"B");
-    	Cell c = new AsexualCell(1,1,"C");
+    	Cell b = new AsexualCell(4,5,"B");
+    	Cell c = new AsexualCell(3,1,"C");
     	Cell d = new AsexualCell(1,3,"D");
+
+    	Cell e = new SexualCell(3,4,"sE");
+    	Cell f = new SexualCell(3,4,"sF");
+    	Cell g = new SexualCell(3,4,"sG");
+    	Cell h = new SexualCell(3,4,"sH");
 
     	Cell.spaceObj = gameOfLife;
     	
     	//gameOfLife.addCell(a);
-    	gameOfLife.addCell(b); 
     	//gameOfLife.addCell(c);
+    	//gameOfLife.addCell(b);
     	//gameOfLife.addCell(d);
-
+        gameOfLife.addCell(e);
+        gameOfLife.addCell(f);
+        gameOfLife.addCell(g);
+        gameOfLife.addCell(h);
 
     	gameOfLife.startGameOfLife();
     	
