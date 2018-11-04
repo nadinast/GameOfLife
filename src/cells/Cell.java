@@ -52,19 +52,19 @@ public abstract class Cell implements Runnable {
             this.timeUntilHungry = timeHungry;
             foodUnits++;
             setTime(); //time for hungry&starve are reset
-            Thread.sleep(this.timeHungry * 1000); //only for testing!
-
+            //Thread.sleep(this.timeHungry * 1000); //only for testing!
+            Thread.sleep(1000);
         } else {
             timeUntilHungry--;
             if (timeUntilHungry < 0) {
                 timeUntilStarve--;
                 if (timeUntilStarve == 0) {
                     System.out.println("----------For Cell " + this.cellName + " it's game over!----------");
+                    this.alive = false;
                     //randomly generated resources after cell death by starvation
                     int randomResources = ThreadLocalRandom.current().nextInt(1, 5);
-                    spaceObj.addFood(new Food(randomResources, "cellFood"+this.cellName));
-                    System.out.println("----------Cell "+this.cellName+"has generated "+randomResources+" resources!----------");
-                    this.alive = false;
+                    System.out.println("----------Cell "+this.cellName+" has generated "+randomResources+" resources!----------");
+                    spaceObj.addFood(randomResources, cellName);
                 }
             }
         }

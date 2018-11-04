@@ -5,28 +5,33 @@ import cells.Cell;
 import food.Food;
 
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class Space {
     private ArrayList<Cell> cells = new ArrayList<>();
-    private CopyOnWriteArrayList<Food> food = new CopyOnWriteArrayList<>();
+    private ArrayList<Food> food = new ArrayList<>();
     Lock lock = new ReentrantLock();
 
     public boolean checkSpaceForFood(String threadInfo) throws InterruptedException {
     	try {
     	    Boolean lockFood;
-			for(Food resource: food) {
+			Iterator<Food> foodIt = food.iterator();
+			while(foodIt.hasNext()) {
+				Food resource = foodIt.next();
 			    lockFood = resource.lock.tryLock();
                 if (lockFood)
                 {
                     try{
                         System.out.println(threadInfo + " acquired lock for "+resource.name);
                         if(resource.getResourceUnits() > 0 ) {
-                            System.out.println("Food:" + resource.name + " - ");
                             resource.decrementResourceUnits();
-                            System.out.println("Resources left: " + resource.getResourceUnits());
+                            System.out.println("Food:" + resource.name + " - " + "Resources left: " + resource.getResourceUnits());
                             return true;
                         }
                     }
@@ -37,7 +42,7 @@ public class Space {
                         resource.lock.unlock();
                     }
 				}else {
-                    System.out.println(threadInfo + " tried to lock food "+resource.name);
+                    System.out.println(threadInfo + " tried to lock food " + resource.name);
                 }
 			}
 		} catch (Exception e) {
@@ -51,8 +56,34 @@ public class Space {
     	cells.add(c);
     }
     
-    public void addFood(Food f) {
-    	food.add(f);
+    public void addFood(int resources, String threadInfo) {
+		try {
+			Boolean lockFood;
+			Iterator<Food> foodIt = food.iterator();
+			while(foodIt.hasNext()) {
+				Food availableResource = foodIt.next();
+				lockFood = availableResource.lock.tryLock();
+				if (lockFood)
+				{
+					try{
+						System.out.println(threadInfo + " acquired lock for " + availableResource.name + "---- in order to add resource");
+						availableResource.incrementResourceUnits(resources);
+						break;
+					}
+					finally
+					{
+						// Make sure to unlock so that we don't cause a deadlock
+						System.out.println(threadInfo+" unlocked " + availableResource.name);
+						availableResource.lock.unlock();
+					}
+				}else {
+					System.out.println(threadInfo + " tried to lock food " + availableResource.name);
+				}
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public void printEverything() {
@@ -75,25 +106,29 @@ public class Space {
 		//if foodObj.resourceCount === 0 => 
 			//then GC & Remove from Array
 	}
-	
+
+	public void addToInitialFoodStash(Food food){
+    	this.food.add(food);
+	}
+
     public static void main(String[] args) {
     	Space gameOfLife = new Space();
     	
-    	gameOfLife.addFood(new Food(3, "resourceA"));
-    	gameOfLife.addFood(new Food(10,"resourceB"));
+    	gameOfLife.addToInitialFoodStash(new Food(3, "RESOURCE1"));
+    	gameOfLife.addToInitialFoodStash(new Food(2,"RESOURCE2"));
     	//gameOfLife.addFood(new Food(4));
     	//gameOfLife.addFood(new Food(1));
     	
     	Cell a = new AsexualCell(10,5,"A");
-    	Cell b = new AsexualCell(3,1,"B");
-    	Cell c = new AsexualCell(1,1,"C");
+    	Cell b = new AsexualCell(4,5,"B");
+    	Cell c = new AsexualCell(3,1,"C");
     	Cell d = new AsexualCell(1,3,"D");
 
     	Cell.spaceObj = gameOfLife;
     	
     	//gameOfLife.addCell(a);
-    	gameOfLife.addCell(b); 
-    	//gameOfLife.addCell(c);
+    	gameOfLife.addCell(c);
+    	gameOfLife.addCell(b);
     	//gameOfLife.addCell(d);
 
 
