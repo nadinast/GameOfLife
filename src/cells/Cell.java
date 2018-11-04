@@ -61,12 +61,13 @@ public abstract class Cell implements Runnable {
                 timeStarve--;
                 if (timeStarve == 0) {
                     System.out.println("----------For Cell " + this.cellName + " it's game over!----------");
+                    this.alive = false;
                     //randomly generated resources after cell death by starvation
                     int randomResources = ThreadLocalRandom.current().nextInt(1, 5);
-                    //spaceObj.addFood(new Food(randomResources, "cellFood"+this.cellName));
                     System.out.println("----------Cell "+this.cellName+" has generated "+randomResources+" resources!----------");
-                    System.out.println();
+                    spaceObj.addFood(randomResources, cellName);
                     this.alive = false;
+
                 }
             }
         }

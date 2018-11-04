@@ -15,7 +15,7 @@ public class Food {
 		this.name = name;
 	}
 	
-	public int getResourceUnits() throws InterruptedException {
+	public int getResourceUnits() {
 		//Thread.sleep(new Random().nextInt(1000));
 		return resourceUnits;
 	}
@@ -23,4 +23,16 @@ public class Food {
 	public void decrementResourceUnits() {
 		this.resourceUnits --;
 	}
+
+	@Override
+	public String toString() {
+		return "Food{" +
+				"resourceUnits=" + resourceUnits +
+				", name='" + name + '\'' +
+				'}';
+	}
+
+    public void incrementResourceUnits(int units) {
+        this.resourceUnits += units;
+    }
 }

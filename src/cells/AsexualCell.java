@@ -8,10 +8,11 @@ public class AsexualCell extends Cell {
 
 	@Override
     public void divide() {
+
         Cell c1 = new AsexualCell(this.timeUntilHungry,this.timeUntilStarve,this.cellName+"-Achild1");
         Cell c2 = new AsexualCell(this.timeUntilHungry,this.timeUntilStarve,this.cellName+"-Achild2");
         this.alive = false; //this cell that divided is no longer alive
-        System.out.println("~~~~~~~~~~~~CELL "+this.cellName+" HAS DIVIDED!~~~~~~~~~~~");
+        System.out.println("~~~~~~~~~~~~CELL " + this.cellName+" HAS DIVIDED!~~~~~~~~~~~");
         Thread t1 = new Thread(c1);
         Thread t2 = new Thread(c2);
         //add the cells to the space
@@ -25,5 +26,4 @@ public class AsexualCell extends Cell {
     
     public void eat() {
     }
-
 }
