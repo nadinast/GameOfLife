@@ -9,7 +9,6 @@ public abstract class Cell implements Runnable {
 	public static Space spaceObj;
 
     public abstract void divide();
-    public abstract boolean canDivide();
    // public abstract boolean canLive();
 
     protected int foodUnits;
@@ -45,29 +44,40 @@ public abstract class Cell implements Runnable {
             if(canDivide()) divide();
        }
     }
+
 	
 	public void eat(Space space) throws InterruptedException {
         if (space.checkSpaceForFood(cellName)) {
             System.out.println(" - Cell: " + this.cellName + " ate. ");
-            this.timeUntilHungry = timeHungry;
+            //this.timeUntilHungry = timeHungry;
             foodUnits++;
             setTime(); //time for hungry&starve are reset
             //Thread.sleep(this.timeHungry * 1000); //only for testing!
             Thread.sleep(1000);
+
         } else {
-            timeUntilHungry--;
-            if (timeUntilHungry < 0) {
-                timeUntilStarve--;
-                if (timeUntilStarve == 0) {
+            timeHungry--;
+            if (timeHungry < 0) {
+                timeStarve--;
+                if (timeStarve == 0) {
                     System.out.println("----------For Cell " + this.cellName + " it's game over!----------");
                     this.alive = false;
                     //randomly generated resources after cell death by starvation
                     int randomResources = ThreadLocalRandom.current().nextInt(1, 5);
                     System.out.println("----------Cell "+this.cellName+" has generated "+randomResources+" resources!----------");
                     spaceObj.addFood(randomResources, cellName);
+                    this.alive = false;
+
                 }
             }
         }
+    }
+
+    public boolean canDivide() {
+        if(this.foodUnits >= 4){
+            return true;
+        }
+        return false;
     }
 	
 	public String toString() {
