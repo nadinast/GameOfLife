@@ -5,43 +5,42 @@ import cells.Cell;
 import food.Food;
 
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Space {
     private ArrayList<Cell> cells = new ArrayList<>();
-    private CopyOnWriteArrayList<Food> food = new CopyOnWriteArrayList<>();
-    Lock lock = new ReentrantLock();
+    private ArrayList<Food> food = new ArrayList<>();
 
-    public boolean checkSpaceForFood(String threadInfo) throws InterruptedException {
+    public boolean checkSpaceForFood(String threadInfo) {
     	try {
     	    Boolean lockFood;
-			for(Food resource: food) {
+            Iterator<Food> foodIterator = food.iterator();
+    	    while(foodIterator.hasNext()) {
+    	        Food resource = foodIterator.next();
 			    lockFood = resource.lock.tryLock();
-                if (lockFood)
-                {
+                if (lockFood) {
                     try{
-                        System.out.println(threadInfo + " acquired lock for "+resource.name);
-                        if(resource.getResourceUnits() > 0 ) {
-                            System.out.println("Food:" + resource.name + " - ");
-                            resource.decrementResourceUnits();
-                            System.out.println("Resources left: " + resource.getResourceUnits());
-                            return true;
+                        int availableResources = resource.getResourceUnits();
+                        System.out.println(threadInfo + " acquired lock for " + resource.name +"\n"
+                                +"Food " + resource.name + " has " + (availableResources - 1) + " resources left");
+                        if(availableResources == 1) {
+                            foodIterator.remove();
+                            System.out.println(resource);
                         }
+                        else
+                            resource.decrementResourceUnits();
+                        return true;
                     }
-                    finally
-                    {
-                        // Make sure to unlock so that we don't cause a deadlock
+                    finally{
                         System.out.println(threadInfo+" unlocked "+resource.name);
                         resource.lock.unlock();
                     }
-				}else {
+				}else
                     System.out.println(threadInfo + " tried to lock food "+resource.name);
-                }
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         return false;
@@ -52,7 +51,7 @@ public class Space {
     }
     
     public void addFood(Food f) {
-    	food.add(f);
+        food.add(f);
     }
     
     public void printEverything() {
@@ -71,8 +70,8 @@ public class Space {
     	}
     }
     
-	public void removeFoodSource(Food foodObj) {
-		//if foodObj.resourceCount === 0 => 
+	public void removeFoodSource(Food food) {
+		//if food.resourceCount === 0 =>
 			//then GC & Remove from Array
 	}
 	
@@ -80,20 +79,19 @@ public class Space {
     	Space gameOfLife = new Space();
     	
     	gameOfLife.addFood(new Food(3, "resourceA"));
-    	gameOfLife.addFood(new Food(10,"resourceB"));
+    	gameOfLife.addFood(new Food(2,"resourceB"));
     	//gameOfLife.addFood(new Food(4));
     	//gameOfLife.addFood(new Food(1));
     	
-    	Cell a = new AsexualCell(10,5,"A");
-    	Cell b = new AsexualCell(3,1,"B");
-    	Cell c = new AsexualCell(1,1,"C");
-    	Cell d = new AsexualCell(1,3,"D");
-
-    	Cell.spaceObj = gameOfLife;
+    	Cell cell1 = new AsexualCell(4,5,"A");
+    	Cell cell2 = new AsexualCell(3,1,"B");
+    	//Cell cell3 = new AsexualCell(1,1,"C");
+    	//Cell cell4 = new AsexualCell(1,3,"D");
+        cell1.setSharedSpace(gameOfLife);
     	
     	//gameOfLife.addCell(a);
-    	gameOfLife.addCell(b); 
-    	//gameOfLife.addCell(c);
+    	gameOfLife.addCell(cell2);
+    	gameOfLife.addCell(cell1);
     	//gameOfLife.addCell(d);
 
 

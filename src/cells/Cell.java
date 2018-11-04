@@ -6,81 +6,86 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 public abstract class Cell implements Runnable {
-	public static Space spaceObj;
+	private static Space space;
+
+    protected final int TIME_UNTIL_HUNGRY;
+    protected final int TIME_UNTIL_STARVE;
+    protected final String NAME;
+
+    protected int foodUnits;
+    protected boolean alive = true;
+
+    private int currentTimeUntilHungry;
+    private int currentTimeUntilStarve;
+
+    public Cell(int timeUntilHungry, int timeUntilStarve, String name) {
+		this.foodUnits = 0;
+		this.TIME_UNTIL_HUNGRY = timeUntilHungry;
+		this.TIME_UNTIL_STARVE = timeUntilStarve;
+		this.NAME = name;
+        this.currentTimeUntilHungry = this.TIME_UNTIL_HUNGRY;
+        this.currentTimeUntilStarve = this.TIME_UNTIL_STARVE;
+	}
 
     public abstract void divide();
     public abstract boolean canDivide();
-   // public abstract boolean canLive();
 
-    protected int foodUnits;
-    protected int timeUntilHungry;
-    protected int timeUntilStarve;
-    
-    private int timeHungry;
-    private int timeStarve;
-    protected boolean alive = true;
-    
-    protected String cellName;
-    
-    public Cell(int timeUntilHungry, int timeUntilStarve, String name) {
-		this.foodUnits = 0;
-		this.timeUntilHungry = timeUntilHungry;
-		this.timeUntilStarve = timeUntilStarve;
-		this.cellName = name;
-		setTime();
-	}
-    
-    public void setTime(){
-    	this.timeHungry = this.timeUntilHungry;
-    	this.timeStarve = this.timeUntilStarve;
+    public void resetHungryAndStarveTimes(){
+    	this.currentTimeUntilHungry = this.TIME_UNTIL_HUNGRY;
+    	this.currentTimeUntilStarve = this.TIME_UNTIL_STARVE;
     }
+
 
     public void addCellToSpace(Cell c){
-        spaceObj.addCell(c);
+        space.addCell(c);
     }
 
-	public void live() throws InterruptedException{
+	public void live(){
         while(alive){
-            eat(spaceObj);
-            if(canDivide()) divide();
+            eat();
+            if(canDivide())
+                divide();
        }
     }
 	
-	public void eat(Space space) throws InterruptedException {
-        if (space.checkSpaceForFood(cellName)) {
-            System.out.println(" - Cell: " + this.cellName + " ate. ");
-            this.timeUntilHungry = timeHungry;
+	public void eat(){
+        if (space.checkSpaceForFood(NAME)) {
+            System.out.println(" - Cell: " + this.NAME + " ate.");
             foodUnits++;
-            setTime(); //time for hungry&starve are reset
-            Thread.sleep(this.timeHungry * 1000); //only for testing!
-
+            resetHungryAndStarveTimes();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } else {
-            timeUntilHungry--;
-            if (timeUntilHungry < 0) {
-                timeUntilStarve--;
-                if (timeUntilStarve == 0) {
-                    System.out.println("----------For Cell " + this.cellName + " it's game over!----------");
+            currentTimeUntilHungry--;
+            if (currentTimeUntilHungry < 0) {
+                currentTimeUntilStarve--;
+                if (currentTimeUntilStarve == 0) {
+                    System.out.println("----------Cell " + this.NAME + " died----------");
                     //randomly generated resources after cell death by starvation
                     int randomResources = ThreadLocalRandom.current().nextInt(1, 5);
-                    spaceObj.addFood(new Food(randomResources, "cellFood"+this.cellName));
-                    System.out.println("----------Cell "+this.cellName+"has generated "+randomResources+" resources!----------");
+                    space.addFood(new Food(randomResources, "cellFood" + this.NAME));
+                    System.out.println("----------Cell "+ this.NAME + " generated " + randomResources + " resources!----------");
                     this.alive = false;
                 }
             }
         }
     }
-	
-	public String toString() {
-		return this.cellName;
-	}
-    
+
     @Override
     public void run() {
-        try {
-			live();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        System.out.println("----Cell " + NAME + " is alive!----");
+        live();
+    }
+
+    @Override
+    public String toString() {
+        return this.NAME;
+    }
+
+    public void setSharedSpace(Space space) {
+        this.space = space;
     }
 }

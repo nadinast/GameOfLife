@@ -1,6 +1,5 @@
 package food;
 
-import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -15,12 +14,17 @@ public class Food {
 		this.name = name;
 	}
 	
-	public int getResourceUnits() throws InterruptedException {
+	public int getResourceUnits() {
 		//Thread.sleep(new Random().nextInt(1000));
 		return resourceUnits;
 	}
 	
 	public void decrementResourceUnits() {
-		this.resourceUnits --;
+		this.resourceUnits--;
+	}
+
+	@Override
+	public String toString() {
+		return name;
 	}
 }
