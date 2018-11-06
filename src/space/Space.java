@@ -155,7 +155,7 @@ public class Space {
 
     	Cell.spaceObj = gameOfLife;
     	
-    	//gameOfLife.addCell(a);
+    	gameOfLife.addCell(a);
 
     	//gameOfLife.addCell(c);
     	//gameOfLife.addCell(b);
@@ -163,7 +163,7 @@ public class Space {
         gameOfLife.addCell(e);
         gameOfLife.addCell(f);
         gameOfLife.addCell(g);
-        gameOfLife.addCell(h);
+       // gameOfLife.addCell(h);
 
     	gameOfLife.startGameOfLife();
     	

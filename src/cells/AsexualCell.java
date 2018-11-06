@@ -23,7 +23,4 @@ public class AsexualCell extends Cell {
         t2.start();
     }
 
-    
-    public void eat() {
-    }
 }
